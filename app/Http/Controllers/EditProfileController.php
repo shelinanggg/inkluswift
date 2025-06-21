@@ -115,7 +115,17 @@ class EditProfileController extends Controller
             return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu');
         }
 
-        return view('change-password');
+        // Ambil data user dari database berdasarkan session - PERBAIKAN INI YANG KURANG
+        $userId = Session::get('user_id');
+        $user = User::where('user_id', $userId)->first();
+
+        if (!$user) {
+            Session::flush();
+            return redirect()->route('login')->with('error', 'Data user tidak ditemukan');
+        }
+
+        // Pass variabel $user ke view - PERBAIKAN INI YANG KURANG
+        return view('change-password', compact('user'));
     }
 
     /**
@@ -136,21 +146,34 @@ class EditProfileController extends Controller
             return redirect()->route('login')->with('error', 'Data user tidak ditemukan');
         }
 
-        // Validasi input
+        // Validasi input dengan aturan password yang lebih ketat
         $request->validate([
             'current_password' => 'required',
-            'new_password' => 'required|min:6|confirmed',
+            'new_password' => [
+                'required',
+                'min:6',
+                'confirmed',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/'
+            ],
         ], [
             'current_password.required' => 'Password lama wajib diisi',
             'new_password.required' => 'Password baru wajib diisi',
             'new_password.min' => 'Password baru minimal 6 karakter',
             'new_password.confirmed' => 'Konfirmasi password baru tidak cocok',
+            'new_password.regex' => 'Password baru harus mengandung huruf besar, huruf kecil, angka, dan karakter khusus',
         ]);
 
         // Cek apakah password lama benar
         if (!Hash::check($request->current_password, $user->password)) {
             return back()->withErrors([
                 'current_password' => 'Password lama tidak benar'
+            ]);
+        }
+
+        // Cek apakah password baru berbeda dari password lama
+        if (Hash::check($request->new_password, $user->password)) {
+            return back()->withErrors([
+                'new_password' => 'Password baru harus berbeda dari password lama'
             ]);
         }
 

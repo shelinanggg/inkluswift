@@ -13,6 +13,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\EditProfileController;
 use App\Http\Controllers\OrderHistoryController;
+use App\Http\Controllers\OrderMonitorController;
 
 
 Route::get('/', function () {
@@ -186,3 +187,11 @@ Route::get('/order-history/{orderId}', [OrderHistoryController::class, 'show'])-
 Route::get('/order-history/filter/status', [OrderHistoryController::class, 'filterByStatus'])->name('order-history.filter');
 Route::post('/order-history/{orderId}/cancel', [OrderHistoryController::class, 'cancel'])->name('order-history.cancel');
 Route::post('/order-history/{orderId}/reorder', [OrderHistoryController::class, 'reorder'])->name('order-history.reorder');
+
+// Route untuk monitoring pesanan
+Route::get('/orders/monitor', [OrderMonitorController::class, 'index'])->name('orders.monitor');
+Route::get('/orders/latest', [OrderMonitorController::class, 'getLatestOrders'])->name('orders.latest');
+Route::get('/orders/daily-revenue', [OrderMonitorController::class, 'dailyRevenue'])->name('orders.daily-revenue');
+Route::get('/orders/weekly-stats', [OrderMonitorController::class, 'weeklyStats'])->name('orders.weekly-stats');
+Route::get('/orders/{orderId}', [OrderMonitorController::class, 'show'])->name('orders.show');
+Route::put('/orders/{orderId}/status', [OrderMonitorController::class, 'updateStatus'])->name('orders.update-status');

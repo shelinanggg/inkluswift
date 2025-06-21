@@ -177,8 +177,10 @@
     <!-- Header with logo and auth buttons -->
     <header>
         <div class="logo">
-            <img src="{{asset('Assets/logo hd.png')}}" alt="InkluSwift Logo">
-            <h1>InkluSwift</h1>
+            <a href="{{ route('home') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                <img src="{{asset('Assets/logo hd.png')}}" alt="InkluSwift Logo">
+                <h1>InkluSwift</h1>
+            </a>
         </div>
         <div class="auth-buttons">
             <a href="{{route('cart')}}" class="btn btn-primary">
@@ -219,13 +221,13 @@
         <div class="sidebar">
             <div class="profile-header">
                 <div class="profile-pic">
-                    @if(Session::get('profile_picture'))
-                        <img src="{{ asset('storage/' . Session::get('profile_picture')) }}" alt="Profile Picture">
+                    @if($user->profile_picture)
+                        <img src="{{ asset('storage/' . $user->profile_picture) }}" alt="Profile Picture">
                     @else
-                        {{ strtoupper(substr(Session::get('user_name', 'U'), 0, 1)) }}
+                        {{ strtoupper(substr($user->name, 0, 1)) }}
                     @endif
                 </div>
-                <span>{{ Session::get('user_name', 'User') }}</span>
+                <span>{{ $user->name }}</span>
             </div>
             <div class="menu-items">
                 <a href="{{route('edit-profile')}}" class="menu-item">
@@ -241,7 +243,7 @@
                     </svg>
                     Ganti Password
                 </a>
-                <a href="{{route('history')}}" class="menu-item">
+                <a href="{{route('order-history.index')}}" class="menu-item">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M9 5H7C5.89543 5 5 5.89543 5 7V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V7C19 5.89543 18.1046 5 17 5H15M9 5C9 6.10457 9.89543 7 11 7H13C14.1046 7 15 6.10457 15 5M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>

@@ -15,7 +15,9 @@
 <body>
     <div class="left-panel">
         <div class="logo-container">
+            <a href="{{ route('landing') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
             <img src="{{asset('Assets/logo hd.png')}}" alt="InkluSwift Logo" class="logo-image">
+            </a>
         </div>
         <div class="logo-text">InkluSwift</div>
     </div>

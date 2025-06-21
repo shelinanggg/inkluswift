@@ -372,15 +372,17 @@
     <!-- Header -->
     <header>
         <div class="logo">
-            <img src="{{asset('Assets/logo hd.png')}}" alt="InkluSwift Logo">
-            <h1>InkluSwift</h1>
+            <a href="{{ route('home') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                <img src="{{asset('Assets/logo hd.png')}}" alt="InkluSwift Logo">
+                <h1>InkluSwift</h1>
+            </a>
         </div>
         <div class="auth-buttons">
             <a href="{{ route('cart') }}" class="btn btn-primary">
                 <img src="{{asset('Assets/cart.png')}}" alt="Cart">
                 Keranjang (0)
             </a>
-            <a href="{{ route('profile') }}" class="btn btn-primary">
+            <a href="{{ route('edit-profile') }}" class="btn btn-primary">
                 <img src="{{asset('Assets/profile.png')}}" alt="Profile">
                 Profil
             </a>

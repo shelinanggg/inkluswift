@@ -151,8 +151,10 @@
 <body>
     <header>
         <div class="logo">
-            <img src="Assets/logo hd.png" alt="InkluSwift Logo">
-            <h1>InkluSwift</h1>
+            <a href="{{ route('admin') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                <img src="{{asset('Assets/logo hd.png')}}" alt="InkluSwift Logo">
+                <h1>InkluSwift</h1>
+            </a>
         </div>
 
         <div class="auth-buttons">
@@ -176,7 +178,7 @@
     <section class="categories">
         <h2>Fitur</h2>
         <div class="category-list">
-            <a href="{{route('order')}}" class="category">
+            <a href="{{route('orders.monitor')}}" class="category">
                 <div class="category-img">
                     <img src="Assets/pesanan.png" alt="Pesanan Aktif">
                 </div>
@@ -188,12 +190,6 @@
                 </div>
                 <h3>Menu</h3>
             </a>
-            <a href="{{route('revenue')}}" class="category">
-                <div class="category-img">
-                    <img src="Assets/pendapatan.png" alt="Pendapatan">
-                </div>
-                <h3>Pendapatan</h3>
-            </a>
             <a href="{{route('account')}}" class="category">
                 <div class="category-img">
                     <img src="Assets/akun.jpg" alt="Akun">
@@ -202,7 +198,7 @@
             </a>
             <a href="{{route('payment')}}" class="category">
                 <div class="category-img">
-                    <img src="Assets/pembayanan.jpg" alt="Pembayaran">
+                    <img src="Assets/pendapatan.png" alt="Pembayaran">
                 </div>
                 <h3>Metode Pembayaran</h3>
             </a>
