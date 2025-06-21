@@ -1,0 +1,590 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Header */
+header {
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo img {
+    height: 40px;
+    margin-right: 10px;
+}
+
+.logo h1 {
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.auth-buttons .btn {
+    display: flex;
+    align-items: center;
+    background-color: #FF4B3A;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.auth-buttons .btn img {
+    height: 16px;
+    margin-right: 5px;
+}
+
+.auth-buttons .btn:hover {
+    background-color: #FF4B3A;
+}
+
+/* Container */
+.container {
+    max-width: 1400px; /* Increased max-width for better spacing */
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+/* Back button */
+.back-btn {
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    color: #555;
+    font-size: 0.9rem;
+    cursor: pointer;
+    margin-bottom: 1rem;
+}
+
+.back-btn svg {
+    margin-right: 5px;
+}
+
+/* Page title */
+.page-title {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+/* Search and filter */
+.search-filter {
+    display: flex;
+    margin-bottom: 1.5rem;
+}
+
+.search-box {
+    position: relative;
+    flex: 1;
+    margin-right: 1rem;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 0.8rem 2.5rem 0.8rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.search-box svg {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+}
+
+.filter-dropdown {
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.filter-dropdown svg {
+    margin-left: 10px;
+    color: #888;
+}
+
+.category-options {
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 150px;
+    z-index: 100;
+}
+
+.category-option {
+    padding: 0.7rem 1rem;
+    cursor: pointer;
+}
+
+.category-option:hover {
+    background-color: #f5f5f5;
+}
+
+/* Menu table - FIXED GRID LAYOUT */
+.menu-table {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    overflow-x: auto; /* Add horizontal scroll for small screens */
+}
+
+/* Fixed grid template with proper column sizing */
+.menu-header {
+    display: grid;
+    grid-template-columns: 80px 80px 200px 120px 80px 100px 120px 100px 120px;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: #555;
+    min-width: 1020px; /* Ensure minimum width */
+}
+
+.menu-item {
+    display: grid;
+    grid-template-columns: 80px 80px 200px 120px 80px 100px 120px 100px 120px;
+    gap: 1rem;
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+    align-items: center;
+    font-size: 0.9rem;
+    min-width: 1020px; /* Ensure minimum width */
+}
+
+.menu-item:hover {
+    background-color: #f9f9f9;
+}
+
+.menu-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+.menu-image.no-image {
+    background-color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+}
+
+.price-display {
+    font-weight: 600;
+    color: #333;
+}
+
+.discount-display {
+    color: #ff4444;
+    font-weight: 500;
+}
+
+.category-badge {
+    padding: 0.3rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-align: center;
+    width: fit-content;
+    background-color: #e6f7ff;
+    color: #0077ff;
+}
+
+/* Stock display styles */
+.stock-display {
+    display: flex;
+    align-items: center;
+}
+
+.stock-badge {
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: center;
+    min-width: 40px;
+}
+
+.stock-badge.in-stock {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.stock-badge.low-stock {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.stock-badge.out-of-stock {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Action buttons - Fixed positioning */
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.edit-btn, .delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+    min-width: 32px;
+    height: 32px;
+}
+
+.edit-btn {
+    color: #0077ff;
+}
+
+.delete-btn {
+    color: #ff3333;
+}
+
+.edit-btn:hover {
+    background-color: #e3f2fd;
+}
+
+.delete-btn:hover {
+    background-color: #ffebee;
+}
+
+/* Menu form */
+.menu-form {
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+    display: none;
+}
+
+.form-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.form-col {
+    flex: 1;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* Image Upload Styles */
+.image-upload {
+    display: flex;
+    align-items: flex-end;
+    gap: 1rem;
+}
+
+.image-preview {
+    width: 120px;
+    height: 120px;
+    border: 1px dashed #ddd;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    background-color: #f9f9f9;
+}
+
+/* SVG icon default - selalu tampil kecuali ada class has-image */
+.image-preview svg {
+    color: #888;
+    display: block;
+    position: absolute; 
+    z-index: 1;
+}
+
+/* Image preview - awalnya hidden */
+.image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none; /* Default hidden */
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+}
+
+/* Ketika ada image, sembunyikan SVG dan tampilkan image */
+.image-preview.has-image svg {
+    display: none;
+}
+
+.image-preview.has-image img {
+    display: block; /* Tampilkan image */
+}
+
+/* Remove button */
+.remove-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 20px;
+    height: 20px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    display: none; /* Default hidden */
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 3;
+    border: none;
+}
+
+.remove-btn svg {
+    width: 16px;
+    height: 16px;
+    color: black;
+}
+
+/* Tampilkan remove button ketika ada image */
+.image-preview.has-image .remove-btn {
+    display: flex;
+}
+
+.remove-btn:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.upload-btn {
+    padding: 0.6rem 1rem;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.upload-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.save-btn {
+    padding: 0.8rem 1.5rem;
+    background-color: #FF4B3A;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.save-btn:hover {
+    background-color: #FF4B3A;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.showing-info {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.showing-info select {
+    padding: 0.3rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin: 0 0.3rem;
+}
+
+.pagination-buttons {
+    display: flex;
+    gap: 0.3rem;
+}
+
+.pagination-btn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.pagination-btn.active {
+    background-color: #FF4B3A;
+    color: white;
+    border-color: #FF4B3A;
+}
+
+.pagination-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Add menu button */
+.add-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #FF4B3A;
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 2rem;
+}
+
+.add-menu-btn svg {
+    margin-right: 0.5rem;
+}
+
+.add-menu-btn:hover {
+    background-color: #FF4B3A;
+}
+
+/* Empty state */
+.no-data {
+    padding: 2rem;
+    text-align: center;
+    color: #777;
+}
+
+/* Error message */
+.error-message {
+    padding: 1rem;
+    text-align: center;
+    color: #ff3333;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 1.5rem;
+    color: #777;
+    font-size: 0.9rem;
+    border-top: 1px solid #eee;
+    margin-top: 2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .container {
+        max-width: 100%;
+        padding: 0 0.5rem;
+    }
+    
+    .menu-table {
+        overflow-x: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .search-filter {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .search-box {
+        margin-right: 0;
+    }
+    
+    .form-row {
+        flex-direction: column;
+    }
+    
+    .image-upload {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    header {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .pagination {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
