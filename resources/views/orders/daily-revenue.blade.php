@@ -6,6 +6,11 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Daily Revenue - InkluSwift</title>
     <link rel="stylesheet" href="{{ asset('css/order-monitor.css') }}">
+    <!-- Font Awesome untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Script aksesibilitas -->
+    <script src="{{ asset('js/accessibility.js') }}"></script>
+    
 </head>
 <body>
     <header>
@@ -43,7 +48,12 @@
         <!-- Revenue Stats -->
         <div class="stats-cards">
             <div class="stat-card revenue">
-                <div class="stat-icon">💰</div>
+                <div class="stat-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FF4B3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                </div>
                 <div class="stat-info">
                     <h3>Total Revenue</h3>
                     <p class="stat-value">Rp {{ number_format($dailyRevenue, 0, ',', '.') }}</p>
@@ -51,7 +61,13 @@
             </div>
             
             <div class="stat-card orders">
-                <div class="stat-icon">📦</div>
+                <div class="stat-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FF4B3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    </svg>
+                </div>
                 <div class="stat-info">
                     <h3>Total Orders</h3>
                     <p class="stat-value">{{ $totalOrders }}</p>
@@ -59,7 +75,13 @@
             </div>
             
             <div class="stat-card completed">
-                <div class="stat-icon">📊</div>
+                <div class="stat-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#66bb6a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                </div>
                 <div class="stat-info">
                     <h3>Average Order</h3>
                     <p class="stat-value">Rp {{ number_format($avgOrderValue, 0, ',', '.') }}</p>
@@ -174,7 +196,7 @@
         
         .order-breakdown h3 {
             margin-bottom: 1.5rem;
-            color: #2c3e50;
+            color: black;
         }
         
         .breakdown-table {
@@ -183,7 +205,7 @@
         }
         
         .breakdown-header {
-            background: #34495e;
+            background: #FF4B3A;
             color: white;
             display: grid;
             grid-template-columns: 2fr 1fr 1fr;
@@ -210,6 +232,19 @@
         .items-count {
             font-size: 0.9rem;
             color: #7f8c8d;
+        }
+
+        /* Icon styling */
+        .stat-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            color: #FF4B3A;
+        }
+        
+        .stat-icon svg {
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
         }
     </style>
 </body>

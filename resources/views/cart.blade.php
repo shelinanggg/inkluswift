@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Keranjang Belanja - InkluSwift</title>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <!-- Font Awesome untuk ikon -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta name="csrf-token" content="{{ csrf_token() }}">  
     <!-- CSS halaman -->
     <link rel="stylesheet" href="{{ asset('css/cart.css') }}">
+    <!-- Font Awesome untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Script aksesibilitas -->
     <script src="{{ asset('js/accessibility.js') }}"></script>
 </head>

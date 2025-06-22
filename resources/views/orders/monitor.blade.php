@@ -6,6 +6,11 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Order Monitor - InkluSwift</title>
     <link rel="stylesheet" href="{{ asset('css/order-monitor.css') }}">
+    <!-- Font Awesome untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Script aksesibilitas -->
+    <script src="{{ asset('js/accessibility.js') }}"></script>
+    
 </head>
 <body>
     <header>
@@ -26,7 +31,10 @@
     
     <div class="container">
         <button class="back-btn" onclick="window.location.href='{{ route('admin') }}'">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
             Back to Dashboard
         </button>
         
@@ -35,7 +43,12 @@
         <!-- Stats Cards -->
         <div class="stats-cards">
             <div class="stat-card revenue">
-                <div class="stat-icon">💰</div>
+                <div class="stat-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                </div>
                 <div class="stat-info">
                     <h3>Today's Revenue</h3>
                     <p class="stat-value">Rp {{ number_format($todayRevenue, 0, ',', '.') }}</p>
@@ -43,7 +56,13 @@
             </div>
             
             <div class="stat-card orders">
-                <div class="stat-icon">📦</div>
+                <div class="stat-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    </svg>
+                </div>
                 <div class="stat-info">
                     <h3>Today's Orders</h3>
                     <p class="stat-value">{{ $todayOrders->count() }}</p>
@@ -51,7 +70,12 @@
             </div>
             
             <div class="stat-card pending">
-                <div class="stat-icon">⏳</div>
+                <div class="stat-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                </div>
                 <div class="stat-info">
                     <h3>Pending Orders</h3>
                     <p class="stat-value">{{ $orderStats['pending'] ?? 0 }}</p>
@@ -59,7 +83,12 @@
             </div>
             
             <div class="stat-card completed">
-                <div class="stat-icon">✅</div>
+                <div class="stat-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                </div>
                 <div class="stat-info">
                     <h3>Completed Orders</h3>
                     <p class="stat-value">{{ $orderStats['completed'] ?? 0 }}</p>
@@ -69,9 +98,28 @@
 
         <!-- Quick Actions -->
         <div class="quick-actions">
-            <a href="{{ route('orders.daily-revenue') }}" class="action-btn">📊 Daily Revenue</a>
-            <button onclick="refreshOrders()" class="action-btn">🔄 Refresh</button>
-            <button onclick="loadWeeklyStats()" class="action-btn">📈 Weekly Stats</button>
+            <a href="{{ route('orders.daily-revenue') }}" class="action-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                Daily Revenue
+            </a>
+            <button onclick="refreshOrders()" class="action-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="23 4 23 10 17 10"></polyline>
+                    <polyline points="1 20 1 14 7 14"></polyline>
+                    <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+                </svg>
+                Refresh
+            </button>
+            <button onclick="loadWeeklyStats()" class="action-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+                Weekly Stats
+            </button>
         </div>
         
         <!-- Orders Table -->
@@ -100,37 +148,95 @@
                     </div>
                     <div class="time">{{ $order->created_at->format('H:i') }}</div>
                     <div class="actions">
-                        <button onclick="viewOrder('{{ $order->order_id }}')" class="btn-view">View</button>
-                        @if($order->canBeCancelled())
+                        <button onclick="viewOrder('{{ $order->order_id }}')" class="btn-view">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            View
+                        </button>
+                        @php
+                            $canBeUpdated = in_array($order->status, ['pending', 'confirmed', 'preparing', 'ready']);
+                            $validTransitions = [];
+                            
+                            switch($order->status) {
+                                case 'pending':
+                                    $validTransitions = ['confirmed', 'cancelled'];
+                                    break;
+                                case 'confirmed':
+                                    $validTransitions = ['preparing', 'cancelled'];
+                                    break;  
+                                case 'preparing':
+                                    $validTransitions = ['ready', 'cancelled'];
+                                    break;
+                                case 'ready':
+                                    $validTransitions = ['completed', 'cancelled'];
+                                    break;
+                                default:
+                                    $validTransitions = [];
+                            }
+                        @endphp
+                        
+                        @if($canBeUpdated && count($validTransitions) > 0)
                         <select onchange="updateOrderStatus('{{ $order->order_id }}', this.value)" class="status-select">
                             <option value="">Change Status</option>
-                            <option value="confirmed" {{ $order->status == 'confirmed' ? 'selected' : '' }}>Confirm</option>
-                            <option value="preparing" {{ $order->status == 'preparing' ? 'selected' : '' }}>Preparing</option>
-                            <option value="ready" {{ $order->status == 'ready' ? 'selected' : '' }}>Ready</option>
-                            <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }}>Complete</option>
-                            <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Cancel</option>
+                            <option value="{{ $order->status }}" selected>Current: {{ $order->status_label }}</option>
+                            @foreach($validTransitions as $transition)
+                                @php
+                                    $transitionLabels = [
+                                        'confirmed' => 'Dikonfirmasi',
+                                        'preparing' => 'Sedang Diproses', 
+                                        'ready' => 'Siap Diambil',
+                                        'completed' => 'Selesai',
+                                        'cancelled' => 'Dibatalkan'
+                                    ];
+                                @endphp
+                                <option value="{{ $transition }}">{{ $transitionLabels[$transition] }}</option>
+                            @endforeach
                         </select>
+                        @else
+                        <span class="text-muted">Final</span>
                         @endif
                     </div>
                 </div>
                 @empty
-                <div class="no-data">No orders found for today.</div>
+                <div class="no-data">
+                    <div class="no-data-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                        </svg>
+                    </div>
+                    <h3>No Orders Today</h3>
+                    <p>There are no orders for today yet.</p>
+                </div>
                 @endforelse
             </div>
         </div>
     </div>
-    
-    <!-- Order Detail Modal -->
-    <div id="orderModal" class="modal">
+
+    <!-- Order Details Modal -->
+    <div id="orderModal" class="modal" style="display: none;">
         <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Order Details</h2>
-            <div id="orderDetails">
-                <!-- Order details will be loaded here -->
+            <div class="modal-header">
+                <h2>Order Details</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="orderDetails">
+                    <!-- Order details will be loaded here -->
+                </div>
             </div>
         </div>
     </div>
-    
+
+    <!-- Loading Indicator -->
+    <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
+
     <footer>
         All rights Reserved © 2025, InkluSwift
     </footer>

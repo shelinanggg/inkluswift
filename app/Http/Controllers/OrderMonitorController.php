@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 
 class OrderMonitorController extends Controller
@@ -50,6 +51,113 @@ class OrderMonitorController extends Controller
     }
 
     /**
+     * Update status pesanan - FIXED VERSION
+     */
+    public function updateStatus(Request $request, $orderId)
+    {
+        try {
+            // Validasi input
+            $validator = Validator::make($request->all(), [
+                'status' => 'required|in:pending,confirmed,preparing,ready,completed,cancelled'
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Status tidak valid',
+                    'errors' => $validator->errors()
+                ], 400);
+            }
+
+            // Cari order berdasarkan order_id
+            $order = Order::where('order_id', $orderId)->first();
+            
+            if (!$order) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Pesanan tidak ditemukan'
+                ], 404);
+            }
+
+            // Cek apakah status bisa diubah
+            $validTransitions = $this->getValidStatusTransitions($order->status);
+            $newStatus = $request->status;
+
+            if (!in_array($newStatus, $validTransitions)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "Status tidak bisa diubah dari {$order->status} ke {$newStatus}"
+                ], 400);
+            }
+
+            // Update status menggunakan method yang sudah ada
+            $updated = $order->updateStatus($newStatus);
+
+            if ($updated) {
+                // Reload order untuk mendapatkan data terbaru
+                $order = $order->fresh();
+                
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Status pesanan berhasil diupdate',
+                    'order' => [
+                        'order_id' => $order->order_id,
+                        'status' => $order->status,
+                        'status_label' => $order->status_label,
+                        'status_color' => $order->status_color,
+                        'confirmed_at' => $order->confirmed_at,
+                        'completed_at' => $order->completed_at,
+                        'updated_at' => $order->updated_at
+                    ]
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal mengupdate status pesanan'
+                ], 500);
+            }
+
+        } catch (\Exception $e) {
+            \Log::error('Error updating order status: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat mengupdate status',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Mendapatkan status transisi yang valid
+     */
+    private function getValidStatusTransitions($currentStatus)
+    {
+        $transitions = [
+            'pending' => ['confirmed', 'cancelled'],
+            'confirmed' => ['preparing', 'cancelled'],
+            'preparing' => ['ready', 'cancelled'],
+            'ready' => ['completed', 'cancelled'],
+            'completed' => [], // Status final
+            'cancelled' => []  // Status final
+        ];
+
+        return $transitions[$currentStatus] ?? [];
+    }
+
+    /**
+     * Detail pesanan
+     */
+    public function show($orderId)
+    {
+        $order = Order::with(['user', 'payment', 'orderItems.menu'])
+            ->where('order_id', $orderId)
+            ->firstOrFail();
+
+        return view('orders.detail', compact('order'));
+    }
+
+    /**
      * Pendapatan harian
      */
     public function dailyRevenue(Request $request)
@@ -80,34 +188,6 @@ class OrderMonitorController extends Controller
             'avgOrderValue', 
             'date'
         ));
-    }
-
-    /**
-     * Update status pesanan
-     */
-    public function updateStatus(Request $request, $orderId)
-    {
-        $order = Order::where('order_id', $orderId)->firstOrFail();
-        
-        $order->updateStatus($request->status);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Status pesanan berhasil diupdate',
-            'order' => $order
-        ]);
-    }
-
-    /**
-     * Detail pesanan
-     */
-    public function show($orderId)
-    {
-        $order = Order::with(['user', 'payment', 'orderItems.menu'])
-            ->where('order_id', $orderId)
-            ->firstOrFail();
-
-        return view('orders.detail', compact('order'));
     }
 
     /**

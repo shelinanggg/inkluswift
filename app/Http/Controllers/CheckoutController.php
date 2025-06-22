@@ -111,23 +111,6 @@ class CheckoutController extends Controller
                     $proofImage = $request->file('proof_image')->store('payment_proofs', 'public');
                 }
 
-                // Tentukan status pesanan
-                // Jika COD atau tidak perlu bukti, langsung confirmed
-                // Jika perlu bukti dan ada bukti, langsung confirmed (auto-approve)
-                // Jika perlu bukti tapi tidak ada bukti, pending
-                $orderStatus = 'pending';
-                $confirmedAt = null;
-                
-                if ($paymentMethod->is_cod || !$paymentMethod->need_proof) {
-                    // COD atau tidak perlu bukti -> langsung confirmed
-                    $orderStatus = 'confirmed';
-                    $confirmedAt = now();
-                } elseif ($paymentMethod->need_proof && $proofImage) {
-                    // Perlu bukti dan ada bukti -> auto approve (langsung confirmed)
-                    $orderStatus = 'confirmed';
-                    $confirmedAt = now();
-                }
-
                 // Buat order
                 $order = Order::create([
                     'user_id' => $userId,
@@ -139,11 +122,10 @@ class CheckoutController extends Controller
                     'customer_name' => $request->customer_name,
                     'customer_phone' => $request->customer_phone,
                     'customer_address' => $request->customer_address,
-                    'status' => $orderStatus,
+                    'status' => $paymentMethod->auto_confirm ? 'confirmed' : 'pending',
                     'notes' => $request->notes,
                     'proof_image' => $proofImage,
-                    'confirmed_at' => $confirmedAt,
-                    'auto_confirmed' => $orderStatus === 'confirmed' ? true : false, // Flag untuk menandai auto confirm
+                    'confirmed_at' => $paymentMethod->auto_confirm ? now() : null,
                 ]);
 
                 // Buat order items dari cart
@@ -179,7 +161,7 @@ class CheckoutController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Pesanan berhasil dibuat dan dikonfirmasi otomatis',
+                'message' => 'Pesanan berhasil dibuat',
                 'redirect_url' => route('checkout.success')
             ]);
 
@@ -187,70 +169,6 @@ class CheckoutController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal memproses pesanan: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * Customer self-confirm payment (jika masih pending)
-     */
-    public function confirmPayment(Request $request)
-    {
-        if (!Session::has('is_logged_in')) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Silakan login terlebih dahulu'
-            ], 401);
-        }
-
-        $request->validate([
-            'order_id' => 'required|string|exists:orders,order_id',
-            'proof_image' => 'required|image|mimes:jpeg,png,jpg|max:2048'
-        ]);
-
-        $userId = Session::get('user_id');
-        
-        // Ambil order yang masih pending milik user
-        $order = Order::where('order_id', $request->order_id)
-            ->where('user_id', $userId)
-            ->where('status', 'pending')
-            ->first();
-
-        if (!$order) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Pesanan tidak ditemukan atau sudah dikonfirmasi'
-            ], 404);
-        }
-
-        try {
-            // Upload bukti pembayaran baru
-            if ($request->hasFile('proof_image')) {
-                // Hapus bukti lama jika ada
-                if ($order->proof_image) {
-                    Storage::disk('public')->delete($order->proof_image);
-                }
-                
-                $proofImage = $request->file('proof_image')->store('payment_proofs', 'public');
-                
-                // Update order status menjadi confirmed
-                $order->update([
-                    'proof_image' => $proofImage,
-                    'status' => 'confirmed',
-                    'confirmed_at' => now(),
-                    'auto_confirmed' => true
-                ]);
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Pembayaran berhasil dikonfirmasi'
-                ]);
-            }
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal mengkonfirmasi pembayaran: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -277,29 +195,6 @@ class CheckoutController extends Controller
         Session::forget('last_order_id');
 
         return view('checkout.success', compact('order'));
-    }
-
-    /**
-     * Show order detail for customer confirmation
-     */
-    public function orderDetail($orderId)
-    {
-        if (!Session::has('is_logged_in')) {
-            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu');
-        }
-
-        $userId = Session::get('user_id');
-        
-        $order = Order::with(['orderItems', 'payment'])
-            ->where('order_id', $orderId)
-            ->where('user_id', $userId)
-            ->first();
-
-        if (!$order) {
-            return redirect()->route('home')->with('error', 'Pesanan tidak ditemukan');
-        }
-
-        return view('order.detail', compact('order'));
     }
 
     /**

@@ -70,7 +70,7 @@
             background-color: #ff5544;
             color: white;
             padding: 0px 0%;
-            padding-left: 8%;
+            padding-left: 10%;
             display: flex;
             justify-content: space-between;
             align-items: center;

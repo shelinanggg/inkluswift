@@ -37,12 +37,13 @@ async function refreshOrders() {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json'
             }
         });
         
         if (!response.ok) {
-            throw new Error('Failed to fetch orders');
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
         
         const orders = await response.json();
@@ -53,7 +54,7 @@ async function refreshOrders() {
         
     } catch (error) {
         console.error('Error refreshing orders:', error);
-        showNotification('Failed to refresh orders', 'error');
+        showNotification('Failed to refresh orders: ' + error.message, 'error');
     }
 }
 
@@ -69,7 +70,7 @@ function updateOrdersTable(orders) {
     }
     
     container.innerHTML = orders.map(order => {
-        const canBeCancelled = ['pending', 'confirmed'].includes(order.status);
+        const canBeCancelled = ['pending', 'confirmed', 'preparing', 'ready'].includes(order.status);
         
         return `
             <div class="order-row" data-order-id="${order.order_id}">
@@ -85,16 +86,7 @@ function updateOrdersTable(orders) {
                 <div class="time">${formatTime(order.created_at)}</div>
                 <div class="actions">
                     <button onclick="viewOrder('${order.order_id}')" class="btn-view">View</button>
-                    ${canBeCancelled ? `
-                        <select onchange="updateOrderStatus('${order.order_id}', this.value)" class="status-select">
-                            <option value="">Change Status</option>
-                            <option value="confirmed" ${order.status === 'confirmed' ? 'selected' : ''}>Confirm</option>
-                            <option value="preparing" ${order.status === 'preparing' ? 'selected' : ''}>Preparing</option>
-                            <option value="ready" ${order.status === 'ready' ? 'selected' : ''}>Ready</option>
-                            <option value="completed" ${order.status === 'completed' ? 'selected' : ''}>Complete</option>
-                            <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Cancel</option>
-                        </select>
-                    ` : ''}
+                    ${canBeCancelled ? generateStatusSelect(order.order_id, order.status) : '<span class="text-muted">Final</span>'}
                 </div>
             </div>
         `;
@@ -102,38 +94,156 @@ function updateOrdersTable(orders) {
 }
 
 /**
- * Update order status
+ * Generate status select dropdown based on current status
+ */
+function generateStatusSelect(orderId, currentStatus) {
+    const validTransitions = getValidStatusTransitions(currentStatus);
+    
+    let options = '<option value="">Change Status</option>';
+    
+    // Add current status as selected
+    const currentLabel = getStatusLabel(currentStatus);
+    options += `<option value="${currentStatus}" selected>Current: ${currentLabel}</option>`;
+    
+    // Add valid transitions
+    validTransitions.forEach(status => {
+        const label = getStatusLabel(status);
+        options += `<option value="${status}">${label}</option>`;
+    });
+    
+    return `
+        <select onchange="updateOrderStatus('${orderId}', this.value)" class="status-select">
+            ${options}
+        </select>
+    `;
+}
+
+/**
+ * Get valid status transitions
+ */
+function getValidStatusTransitions(currentStatus) {
+    const transitions = {
+        'pending': ['confirmed', 'cancelled'],
+        'confirmed': ['preparing', 'cancelled'],
+        'preparing': ['ready', 'cancelled'],
+        'ready': ['completed', 'cancelled'],
+        'completed': [],
+        'cancelled': []
+    };
+    
+    return transitions[currentStatus] || [];
+}
+
+/**
+ * Update order status - FIXED VERSION
  */
 async function updateOrderStatus(orderId, status) {
     if (!status) return;
     
+    // Don't update if it's the same status
+    const currentRow = document.querySelector(`[data-order-id="${orderId}"]`);
+    const currentStatusBadge = currentRow.querySelector('.status-badge');
+    const currentStatus = getCurrentStatusFromBadge(currentStatusBadge);
+    
+    if (status === currentStatus) {
+        // Reset the select to default
+        const select = currentRow.querySelector('.status-select');
+        if (select) select.value = '';
+        return;
+    }
+    
     try {
+        // Show loading state
+        showNotification(`Updating order ${orderId} status...`, 'info');
+        
         const response = await fetch(`/orders/${orderId}/status`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json'
             },
             body: JSON.stringify({ status: status })
         });
         
-        if (!response.ok) {
-            throw new Error('Failed to update order status');
-        }
-        
         const result = await response.json();
         
-        if (result.success) {
-            showNotification(`Order ${orderId} status updated to ${status}`, 'success');
-            refreshOrders(); // Refresh the table
+        if (response.ok && result.success) {
+            showNotification(`Order ${orderId} status updated to ${getStatusLabel(status)}`, 'success');
+            
+            // Update the specific row instead of refreshing entire table
+            updateOrderRow(orderId, result.order);
+            
         } else {
-            throw new Error(result.message || 'Failed to update status');
+            throw new Error(result.message || `HTTP error! status: ${response.status}`);
         }
         
     } catch (error) {
         console.error('Error updating order status:', error);
-        showNotification('Failed to update order status', 'error');
+        showNotification(`Failed to update order status: ${error.message}`, 'error');
+        
+        // Reset the select to previous value
+        const select = currentRow.querySelector('.status-select');
+        if (select) select.value = '';
     }
+}
+
+/**
+ * Update specific order row with new data
+ */
+function updateOrderRow(orderId, orderData) {
+    const orderRow = document.querySelector(`[data-order-id="${orderId}"]`);
+    if (!orderRow) return;
+    
+    // Update status badge
+    const statusContainer = orderRow.querySelector('.status');
+    statusContainer.innerHTML = `
+        <span class="status-badge status-${orderData.status_color}">
+            ${orderData.status_label}
+        </span>
+    `;
+    
+    // Update actions (status select)
+    const actionsContainer = orderRow.querySelector('.actions');
+    const viewButton = actionsContainer.querySelector('.btn-view').outerHTML;
+    
+    const canBeCancelled = ['pending', 'confirmed', 'preparing', 'ready'].includes(orderData.status);
+    
+    actionsContainer.innerHTML = viewButton + 
+        (canBeCancelled ? 
+            generateStatusSelect(orderId, orderData.status) : 
+            '<span class="text-muted">Final</span>'
+        );
+}
+
+/**
+ * Get current status from status badge
+ */
+function getCurrentStatusFromBadge(statusBadge) {
+    const classList = Array.from(statusBadge.classList);
+    const statusClass = classList.find(cls => cls.startsWith('status-'));
+    
+    if (statusClass) {
+        const statusColor = statusClass.replace('status-', '');
+        // Reverse lookup from color to status
+        const colorToStatus = {
+            'warning': 'pending',
+            'info': 'confirmed',
+            'primary': 'preparing',
+            'success': 'ready', // Note: both ready and completed use success
+            'danger': 'cancelled'
+        };
+        
+        // For success, we need to check the text content
+        if (statusColor === 'success') {
+            const text = statusBadge.textContent.trim();
+            return text === 'Siap Diambil' ? 'ready' : 'completed';
+        }
+        
+        return colorToStatus[statusColor] || 'unknown';
+    }
+    
+    return 'unknown';
 }
 
 /**
@@ -141,16 +251,19 @@ async function updateOrderStatus(orderId, status) {
  */
 async function viewOrder(orderId) {
     try {
+        showNotification('Loading order details...', 'info');
+        
         const response = await fetch(`/orders/${orderId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'text/html'
             }
         });
         
         if (!response.ok) {
-            throw new Error('Failed to fetch order details');
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
         
         const html = await response.text();
@@ -160,7 +273,7 @@ async function viewOrder(orderId) {
         
     } catch (error) {
         console.error('Error fetching order details:', error);
-        showNotification('Failed to load order details', 'error');
+        showNotification('Failed to load order details: ' + error.message, 'error');
     }
 }
 
@@ -169,16 +282,19 @@ async function viewOrder(orderId) {
  */
 async function loadWeeklyStats() {
     try {
+        showNotification('Loading weekly statistics...', 'info');
+        
         const response = await fetch('/orders/weekly-stats', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json'
             }
         });
         
         if (!response.ok) {
-            throw new Error('Failed to fetch weekly stats');
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
         
         const stats = await response.json();
@@ -186,7 +302,7 @@ async function loadWeeklyStats() {
         
     } catch (error) {
         console.error('Error fetching weekly stats:', error);
-        showNotification('Failed to load weekly stats', 'error');
+        showNotification('Failed to load weekly stats: ' + error.message, 'error');
     }
 }
 
@@ -250,9 +366,13 @@ function setupModal() {
 }
 
 /**
- * Show notification
+ * Show notification with better styling and positioning
  */
 function showNotification(message, type = 'info') {
+    // Remove existing notifications
+    const existingNotifications = document.querySelectorAll('.notification');
+    existingNotifications.forEach(notif => notif.remove());
+    
     // Create notification element
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
@@ -264,13 +384,16 @@ function showNotification(message, type = 'info') {
         top: 20px;
         right: 20px;
         padding: 1rem 1.5rem;
-        border-radius: 5px;
+        border-radius: 8px;
         color: white;
-        font-weight: bold;
+        font-weight: 500;
         z-index: 10000;
         opacity: 0;
         transform: translateX(100%);
         transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        max-width: 350px;
+        word-wrap: break-word;
     `;
     
     // Set background color based on type
@@ -297,14 +420,17 @@ function showNotification(message, type = 'info') {
         notification.style.transform = 'translateX(0)';
     }, 100);
     
-    // Remove after 3 seconds
+    // Remove after appropriate time (longer for errors)
+    const duration = type === 'error' ? 5000 : 3000;
     setTimeout(() => {
         notification.style.opacity = '0';
         notification.style.transform = 'translateX(100%)';
         setTimeout(() => {
-            document.body.removeChild(notification);
+            if (document.body.contains(notification)) {
+                document.body.removeChild(notification);
+            }
         }, 300);
-    }, 3000);
+    }, duration);
 }
 
 /**
