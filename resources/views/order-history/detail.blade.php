@@ -222,7 +222,7 @@
                         <div class="summary-details">
                             <div class="summary-row">
                                 <span>Subtotal</span>
-                                <span>Rp {{ number_format($order->subtotal, 0, ',', '.') }}</span>
+                                <span>Rp {{ number_format($order->total_amount, 0, ',', '.') }}</span>
                             </div>
                             @if($order->discount_amount > 0)
                                 <div class="summary-row">
@@ -230,21 +230,21 @@
                                     <span class="discount">-Rp {{ number_format($order->discount_amount, 0, ',', '.') }}</span>
                                 </div>
                             @endif
-                            @if($order->tax_amount > 0)
+                            @if($order->service_charge > 0)
                                 <div class="summary-row">
-                                    <span>Pajak</span>
-                                    <span>Rp {{ number_format($order->tax_amount, 0, ',', '.') }}</span>
+                                    <span>Biaya Ongkir</span>
+                                    <span>Rp {{ number_format($order->service_charge, 0, ',', '.') }}</span>
                                 </div>
                             @endif
                             <div class="summary-row total">
                                 <span><strong>Total</strong></span>
-                                <span><strong>Rp {{ number_format($order->total_amount, 0, ',', '.') }}</strong></span>
+                                <span><strong>Rp {{ number_format($order->final_amount, 0, ',', '.') }}</strong></span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Payment Information -->
+                Payment Information
                 @if($order->payment)
                     <div class="form-group">
                         <div class="form-header">
@@ -254,9 +254,9 @@
                             <div class="payment-details">
                                 <div class="payment-row">
                                     <span>Metode Pembayaran</span>
-                                    <span>{{ ucfirst($order->payment->payment_method) }}</span>
+                                    <span>{{ ucfirst($order->payment->method_name) }}</span>
                                 </div>
-                                <div class="payment-row">
+                                <!-- <div class="payment-row">
                                     <span>Status Pembayaran</span>
                                     <span class="payment-status status-{{ $order->payment->status }}">
                                         {{ ucfirst($order->payment->status) }}
@@ -267,7 +267,7 @@
                                         <span>Tanggal Pembayaran</span>
                                         <span>{{ $order->payment->paid_at->format('d M Y, H:i') }}</span>
                                     </div>
-                                @endif
+                                @endif -->
                             </div>
                         </div>
                     </div>

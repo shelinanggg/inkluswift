@@ -176,16 +176,16 @@
 }
 
 .btn-detail {
-    background-color: #007bff;
+    background-color: #FF4B3A;
     color: white;
 }
 
 .btn-detail:hover {
-    background-color: #0056b3;
+    background-color: #FF4B3A;
 }
 
 .btn-cancel {
-    background-color: #dc3545;
+    background-color: #4c0f15;
     color: white;
 }
 
@@ -249,21 +249,21 @@
 .pagination-wrapper span {
     padding: 0.5rem 0.75rem;
     border: 1px solid #dee2e6;
-    color: #007bff;
+    color: #FF4B3A;
     text-decoration: none;
     border-radius: 5px;
     transition: all 0.3s;
 }
 
 .pagination-wrapper a:hover {
-    background-color: #007bff;
+    background-color: #FF4B3A;
     color: white;
 }
 
 .pagination-wrapper .active span {
-    background-color: #007bff;
+    background-color: #FF4B3A;
     color: white;
-    border-color: #007bff;
+    border-color: #FF4B3A;
 }
 
 .pagination-wrapper .disabled span {
@@ -361,7 +361,7 @@
 }
 
 .order-date i {
-    color: #007bff;
+    color: #FF4B3A;
 }
 
 .order-status .status-badge {
@@ -386,7 +386,7 @@
 
 .timeline {
     position: relative;
-    padding-left: 2rem;
+    padding-left: 2.6rem;
 }
 
 .timeline::before {
@@ -527,7 +527,7 @@
     text-align: right;
     font-size: 1.1rem;
     font-weight: 700;
-    color: #007bff;
+    color: #FF4B3A;
 }
 
 /* Order Summary */
@@ -566,7 +566,7 @@
 .summary-row.total {
     padding-top: 1rem;
     margin-top: 0.5rem;
-    border-top: 2px solid #007bff;
+    border-top: 2px solid #FF4B3A;
     font-size: 1.2rem;
 }
 

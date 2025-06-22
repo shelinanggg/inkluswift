@@ -154,7 +154,7 @@
                                     </div>
 
                                     <div class="order-total">
-                                        <strong>Total: Rp {{ number_format($order->total_amount, 0, ',', '.') }}</strong>
+                                        <strong>Total: Rp {{ number_format($order->final_amount, 0, ',', '.') }}</strong>
                                     </div>
                                 </div>
 
