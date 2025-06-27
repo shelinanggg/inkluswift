@@ -142,7 +142,7 @@ class OrderHistoryController extends Controller
 
         Session::put('reorder_items', $cartItems);
 
-        return redirect()->route('checkout.index')
+        return redirect()->route('checkout')
             ->with('success', 'Item pesanan telah ditambahkan ke keranjang');
     }
 
