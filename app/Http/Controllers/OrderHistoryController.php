@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
 class OrderHistoryController extends Controller
@@ -128,22 +130,38 @@ class OrderHistoryController extends Controller
             ->where('user_id', $userId)
             ->firstOrFail();
 
-        // Simpan item pesanan ke session untuk checkout
-        $cartItems = [];
-        foreach ($order->orderItems as $item) {
-            $cartItems[] = [
-                'menu_id' => $item->menu_id,
-                'menu_name' => $item->menu_name,
-                'quantity' => $item->quantity,
-                'price' => $item->price,
-                'discount_percent' => $item->discount_percent
-            ];
+        try {
+            DB::transaction(function () use ($order, $userId) {
+                // Tambahkan setiap item dari order ke cart database
+                foreach ($order->orderItems as $item) {
+                    // Cek apakah item sudah ada di cart
+                    $existingCartItem = Cart::where('user_id', $userId)
+                        ->where('menu_id', $item->menu_id)
+                        ->first();
+
+                    if ($existingCartItem) {
+                        // Jika sudah ada, tambahkan quantity
+                        $existingCartItem->quantity += $item->quantity;
+                        $existingCartItem->save();
+                    } else {
+                        // Jika belum ada, buat item cart baru
+                        Cart::create([
+                            'user_id' => $userId,
+                            'menu_id' => $item->menu_id,
+                            'quantity' => $item->quantity,
+                            'price' => $item->price
+                        ]);
+                    }
+                }
+            });
+
+            return redirect()->route('cart')
+                ->with('success', 'Item pesanan telah ditambahkan ke keranjang');
+                
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Gagal menambahkan item ke keranjang. Silakan coba lagi.');
         }
-
-        Session::put('reorder_items', $cartItems);
-
-        return redirect()->route('checkout')
-            ->with('success', 'Item pesanan telah ditambahkan ke keranjang');
     }
 
     /**
