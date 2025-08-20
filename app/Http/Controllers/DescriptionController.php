@@ -37,7 +37,7 @@ class DescriptionController extends Controller
             $discountedPrice = $originalPrice - ($originalPrice * $menu->discount / 100);
         }
 
-        // Get cart items for logged in user - PERBAIKAN INI YANG KURANG
+        // Get cart items for logged in user
         $cartItems = collect(); // Default empty collection
         
         if ($this->isLoggedIn()) {
