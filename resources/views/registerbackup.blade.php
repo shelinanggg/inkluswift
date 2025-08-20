@@ -180,7 +180,7 @@
 
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
-                toggleButton.textContent = 'SembunyikanIniLo';
+                toggleButton.textContent = 'Sembunyikan';
             } else {
                 passwordInput.type = 'password';
                 toggleButton.textContent = 'Lihat';
